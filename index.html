@@ -1,4 +1,4 @@
- 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -737,7 +737,7 @@ function agregarManoPersonalizada(){
 
 // VOZ CON IA
 var reconocimiento=null,grabando=false;
-var currentUserId=localStorage.getItem('sp_uid')||null;
+var currentUserId=null;
 var textoVozAcumulado='';
 var silenceTimer=null;
 
@@ -1000,16 +1000,15 @@ function exportCSV(){
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='stock.csv';a.click();
 }
 
-// IDENTIFICACION SIMPLE
+// LOGIN CON SUPABASE AUTH
 (async function(){
-  if(!currentUserId){
-    var uid=prompt('Ingresá tu email para acceder:');
-    if(!uid){return;}
-    uid=uid.trim().toLowerCase();
-    localStorage.setItem('sp_uid',uid);
-    currentUserId=uid;
+  var sesion=await sb.auth.getSession();
+  if(sesion.data.session){
+    currentUserId=sesion.data.session.user.id;
+    loadAll();
+  } else {
+    window.location.href='https://operix-liard.vercel.app';
   }
-  loadAll();
 })();
 
 </script>
