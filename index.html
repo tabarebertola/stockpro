@@ -1002,12 +1002,21 @@ function exportCSV(){
 
 // LOGIN CON SUPABASE AUTH
 (async function(){
-  var sesion=await sb.auth.getSession();
+  // Intentar leer token desde URL
+  var params = new URLSearchParams(window.location.search);
+  var access_token = params.get('access_token');
+  var refresh_token = params.get('refresh_token');
+  if(access_token && refresh_token){
+    await sb.auth.setSession({access_token: access_token, refresh_token: refresh_token});
+    // Limpiar URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+  var sesion = await sb.auth.getSession();
   if(sesion.data.session){
-    currentUserId=sesion.data.session.user.id;
+    currentUserId = sesion.data.session.user.id;
     loadAll();
   } else {
-    window.location.href='https://operix-liard.vercel.app';
+    window.location.href = 'https://operix-liard.vercel.app';
   }
 })();
 
